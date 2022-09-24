@@ -1,7 +1,5 @@
 #!/bin/bash
 
-#a spinner displaying WAIT, just for the design
-
 spinner()
 {
 pid=$$
@@ -23,8 +21,6 @@ do
 done
 }
 
-#main function
-
 caseONE()
 {
 spinner &
@@ -36,19 +32,17 @@ makeitBeautiful
 cat $(pwd)/unique >> $(pwd)/hosts
 cp /etc/hosts /etc/.hosts_backup
 cp $(pwd)/hosts /etc/hosts
-shreditBeautiful
+#shreditBeautiful
 apt -y autoremove mpg123 &> /dev/null
 unset dossier
 unset hostname
 unset username
 shred -f -n0 -z -u $(pwd)/hosts
 clear
-sitesblockedupdated=$(wc -l < /etc/hosts)
+sitesblockedupdated=$(grep -c "0.0.0.0" /etc/hosts)
 echo "You are ALMOST safe now...with ${sitesblockedupdated-20} websites blocked !".
 sleep 3
 }
-
-#here you can find all the lists downloaded
 
 dlHosts()
 {
@@ -58,31 +52,26 @@ wget https://dbl.oisd.nl/ -O $(pwd)/oisd
 wget https://raw.githubusercontent.com/columndeeply/hosts/main/hosts00 -O $(pwd)/pow
 }
 
-#merges and organizes the host file, adds some p0rn websites not added to the downloaded lists
-#IF IT'S NOT ENOUGH YOU CAN ADD YOUR OWN WEBSITES TO BLOCK WHEN RUNNING THE SCRIPT
-#adds duckduckgo to the whitelist, because aggressive hosts lists surprisingly block it
-
 makeitBeautiful()
 {
 sed '/^#/d' $(pwd)/energized > $(pwd)/cleanenergized
 sed '/^#/d' $(pwd)/blockconvert > $(pwd)/cleanblockconvert
 sed '/^#/d' $(pwd)/oisd > $(pwd)/cleanoisd
-sed -i -e 's/127.0.0.1 /0.0.0.0       /g' $(pwd)/pow
+sed -i -e 's/127.0.0.1 //g' $(pwd)/pow
+sed -i -e 's/^127.0.0.1       //g' $(pwd)/pow
 cat $(pwd)/cleanenergized >> $(pwd)/cleanblockconvert
 cat $(pwd)/cleanblockconvert >> $(pwd)/cleanoisd
+cat $(pwd)/cleanoisd >> $(pwd)/pow
 echo "hdporn92.com
 www.hdporn92.com
 iceporncasting.com
 iceporncasting.net
 www.iceporncasting.com
-www.iceporncasting.net" >> $(pwd)/cleanoisd
-awk '{print "0.0.0.0       "$0}' $(pwd)/cleanoisd > $(pwd)/readyoisd
-cat $(pwd)/readyoisd >> $(pwd)/pow
-sed -i '/duckduckgo.com/d' $(pwd)/pow
-sort $(pwd)/pow | uniq -u > $(pwd)/unique
+www.iceporncasting.net" >> $(pwd)/pow
+awk '{print "0.0.0.0       "$0}' $(pwd)/pow > $(pwd)/readyoisd
+sed -i '/duckduckgo.com/d' $(pwd)/readoisd
+sort $(pwd)/readyoisd | uniq -u > $(pwd)/unique
 }
-
-#shreds and deletes all files unecessary
 
 shreditBeautiful()
 {
@@ -97,8 +86,6 @@ shred -f -n0 -z -u $(pwd)/readyoisd
 shred -f -n0 -z -u $(pwd)/unique
 shred -f -n0 -z -u $(pwd)/music.mp3
 }
-
-#Downloads the chiptune music, installs the player, resets the /etc/hosts file to what it should be in case it would had been modified previously
 
 firstthingsFirst()
 {
@@ -128,12 +115,15 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters" > hosts
 }
 
-#title screen function
-
 titleOP()
 {
 clear
-sitesblocked=$(wc -l < /etc/hosts)
+sitesblocked=$(grep -c "0.0.0.0" /etc/hosts)
+if [ sitesblocked == 0 ];then
+web="website"
+else
+web="websites"
+fi
 username=$(awk -F ':' '{ print $1}' /etc/passwd | tail -n 1)
 echo -e "#############################################
 #                                           #
@@ -147,7 +137,7 @@ echo -e "#############################################
 #############################################
 
 Hello ${username^} !
-Your hosts file is currently blocking ${sitesblocked-20} websites.
+Your hosts file is currently blocking $sitesblocked $web.
 What would you like to do today ?
 [choose a number]
 
@@ -200,5 +190,5 @@ exit ;;
 esac
 }
 
-#starts the title screen
 titleOP
+#trap cleanup EXIT
