@@ -1,5 +1,7 @@
 #!/bin/bash
 
+#a spinner displaying WAIT, just for the design
+
 spinner()
 {
 pid=$$
@@ -20,6 +22,8 @@ do
   done
 done
 }
+
+#main function
 
 caseONE()
 {
@@ -43,6 +47,8 @@ echo "You are safe now... Almost !"
 sleep 3
 }
 
+#here you can find all the lists downloaded
+
 dlHosts()
 {
 wget https://block.energized.pro/unified/formats/domains.txt -O $(pwd)/energized
@@ -50,6 +56,10 @@ wget https://mkb2091.github.io/blockconvert/output/domains.txt -O $(pwd)/blockco
 wget https://dbl.oisd.nl/ -O $(pwd)/oisd
 wget https://raw.githubusercontent.com/columndeeply/hosts/main/hosts00 -O $(pwd)/pow
 }
+
+#merges and organizes the host file, adds some p0rn websites not added to the downloaded lists
+#IF IT'S NOT ENOUGH YOU CAN ADD YOUR OWN WEBSITES TO BLOCK WHEN RUNNING THE SCRIPT
+#adds duckduckgo to the whitelist, because aggressive hosts lists surprisingly block it
 
 makeitBeautiful()
 {
@@ -71,6 +81,8 @@ sed -i '/duckduckgo.com/d' $(pwd)/pow
 sort $(pwd)/pow | uniq -u > $(pwd)/unique
 }
 
+#shreds and deletes all files unecessary
+
 shreditBeautiful()
 {
 shred -f -n0 -z -u $(pwd)/energized
@@ -84,6 +96,8 @@ shred -f -n0 -z -u $(pwd)/readyoisd
 shred -f -n0 -z -u $(pwd)/unique
 shred -f -n0 -z -u $(pwd)/music.mp3
 }
+
+#Downloads the chiptune music, installs the player, resets the /etc/hosts file to what it should be in case it would had been modified previously
 
 firstthingsFirst()
 {
@@ -112,6 +126,8 @@ ff00::0 ip6-mcastprefix
 ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters" > hosts
 }
+
+#title screen function
 
 titleOP()
 {
@@ -181,5 +197,5 @@ exit ;;
 esac
 }
 
+#starts the title screen
 titleOP
-#trap cleanup EXIT
