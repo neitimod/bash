@@ -43,7 +43,8 @@ unset hostname
 unset username
 shred -f -n0 -z -u $(pwd)/hosts
 clear
-echo "You are safe now... Almost !"
+sitesblockedupdated=$(wc -l < /etc/hosts)
+echo "You are ALMOST safe now...with ${sitesblockedupdated-20} websites blocked !".
 sleep 3
 }
 
