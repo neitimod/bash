@@ -1,5 +1,14 @@
 #!/bin/bash
 
+#plays chiptune music (copyright free)
+musique()
+{
+wget musicjapan.free.fr/music.mp3 -O $(pwd)/music.mp3
+apt -y install mpg123
+mpg123 --loop -1 $(pwd)/music.mp3
+}
+
+#spinner to indicate waiting
 spinner()
 {
 pid=$$
@@ -8,7 +17,6 @@ spin[1]="A"
 spin[2]="I"
 spin[3]="T"
 spin[4]=" "
-  	mpg123 music.mp3 &> /dev/null &
 echo -ne "Please wait ... This may take some time ! ${spin[4]}"
 
 while kill -0 $pid 2> /dev/null;
@@ -21,18 +29,18 @@ do
 done
 }
 
+#main function driving the /etc/hosts file's installation
 caseONE()
 {
 spinner &
 dossier=$(pwd)
-firstthingsFirst &> /dev/null
-mpg123 $(pwd)/music.mp3 &> /dev/null &
+rewriteHost &> /dev/null
 dlHosts &> /dev/null
 makeitBeautiful
 cat $(pwd)/unique >> $(pwd)/hosts
 cp /etc/hosts /etc/.hosts_backup
 cp $(pwd)/hosts /etc/hosts
-#shreditBeautiful
+shreditBeautiful
 apt -y autoremove mpg123 &> /dev/null
 unset dossier
 unset hostname
@@ -40,10 +48,13 @@ unset username
 shred -f -n0 -z -u $(pwd)/hosts
 clear
 sitesblockedupdated=$(grep -c "0.0.0.0" /etc/hosts)
-echo "You are ALMOST safe now...with ${sitesblockedupdated-20} websites blocked !".
+echo "You are ALMOST safe now...with $sitesblockedupdated websites blocked !".
 sleep 3
+pidmpg=$(pgrep -o -x mpg123)
+kill $pidmpg &> /dev/null
 }
 
+#downloads all hosts lists
 dlHosts()
 {
 wget https://block.energized.pro/unified/formats/domains.txt -O $(pwd)/energized
@@ -52,6 +63,7 @@ wget https://dbl.oisd.nl/ -O $(pwd)/oisd
 wget https://raw.githubusercontent.com/columndeeply/hosts/main/hosts00 -O $(pwd)/pow
 }
 
+#organizes the future /etc/hosts file
 makeitBeautiful()
 {
 sed '/^#/d' $(pwd)/energized > $(pwd)/cleanenergized
@@ -69,10 +81,11 @@ iceporncasting.net
 www.iceporncasting.com
 www.iceporncasting.net" >> $(pwd)/pow
 awk '{print "0.0.0.0       "$0}' $(pwd)/pow > $(pwd)/readyoisd
-sed -i '/duckduckgo.com/d' $(pwd)/readoisd
+sed -i '/duckduckgo.com/d' $(pwd)/readyoisd
 sort $(pwd)/readyoisd | uniq -u > $(pwd)/unique
 }
 
+#shreds and deletes all files after installation
 shreditBeautiful()
 {
 shred -f -n0 -z -u $(pwd)/energized
@@ -87,11 +100,10 @@ shred -f -n0 -z -u $(pwd)/unique
 shred -f -n0 -z -u $(pwd)/music.mp3
 }
 
-firstthingsFirst()
+#resets the /etc/hosts file to what it should be
+rewriteHost()
 {
 hostname=$(cat /etc/hostname)
-wget musicjapan.free.fr/music.mp3 -O $(pwd)/music.mp3
-apt -y install mpg123
 
 echo "#############################################
 #                                           #
@@ -115,6 +127,7 @@ ff02::1 ip6-allnodes
 ff02::2 ip6-allrouters" > hosts
 }
 
+#displays the main title
 titleOP()
 {
 clear
@@ -157,6 +170,8 @@ exit ;;
 cp /etc/.hosts_backup /etc/hosts
 echo "Backup complete."
 sleep 3
+pidmpg=$(pgrep -o -x mpg123)
+kill $pidmpg &> /dev/null
 clear 
 exit ;;
 3)
@@ -169,6 +184,8 @@ cp /etc/hoststemp /etc/hosts
 shred -f -n0 -z -u /etc/hoststemp
 echo "Successfully added to list."
 sleep 3
+pidmpg=$(pgrep -o -x mpg123)
+kill $pidmpg &> /dev/null
 clear
 exit ;;
 4)
@@ -177,18 +194,24 @@ read website
 sed -i "/$website/d" /etc/hosts
 echo "Successfully removed from list."
 sleep 3
+pidmpg=$(pgrep -o -x mpg123)
+kill $pidmpg &> /dev/null
 clear
 exit ;;
 5) echo "See you soon."
 sleep 3
+pidmpg=$(pgrep -o -x mpg123)
+kill $pidmpg &> /dev/null
 clear
 exit ;;
 *) echo "Wrong option, please start the script again." 
 sleep 3
+pidmpg=$(pgrep -o -x mpg123)
+kill $pidmpg &> /dev/null
 clear
 exit ;;
 esac
 }
 
+musique &> /dev/null &
 titleOP
-#trap cleanup EXIT
