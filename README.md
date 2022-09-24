@@ -1,10 +1,10 @@
 # Domitien bash scripts projects
 
-Not a developper, not a professionnal, I am here to share some scripts I have made for friends, family, or myself, to ease some procedures and installations that can be fully automated.
+Not a developper, not a professionnal, I am here to share some bash scripts I have made for friends, family, or myself, to ease some procedures and installations that can be fully automated.
 
 My scripts are not perfect, feel free to show me a better way to write them, make them lighter, faster... Everyone will benefit.
 
-- Domitien Hosts
+- Domitien Hosts (tested with Ubuntu)
 
 Worried about privacy and consequences of p0rn spreading over the Internet, my first script uses various hosts files sources from [filterlists](https://filterlists.com/lists/pl-host-file) as well as from git.
 
