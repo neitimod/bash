@@ -1,6 +1,6 @@
 # Domitien bash scripts projects
 
-**Not an experimented developper, not a professionnal**, I am here to share some bash scripts I have made for friends, family, or myself, to ease some procedures and installations that can be fully automated.
+**Not an experimented developer, not a professional**, I am here to share some bash scripts I have made for friends, family, or myself, to ease some procedures and installations that can be fully automated.
 
 My scripts are not perfect, feel free to show me a better way to write them, make them lighter, faster... Everyone will benefit.
 
