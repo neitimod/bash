@@ -146,7 +146,7 @@ echo -e "#############################################
 #############################################
 
 Hello ${username^} !
-Your hosts file is currently blocking ${sitesblocked-20}
+Your hosts file is currently blocking ${sitesblocked-20} websites.
 What would you like to do today ?
 [choose a number]
 
