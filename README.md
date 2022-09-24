@@ -23,7 +23,7 @@ What does it do ?
     2) Downloads all the blocklists I use
     3) Merge, organize, creates a clean hosts file
     4) Copies the file to /etc/hosts
-    5) One completed, shred and delete all unecessary files
+    5) Once completed, shreds and deletes all unecessary files
     6) Allows to add a website to the list
     7) Allows to remove a website from the list
     8) Allow to restore the VERY PREVIOUS back-up state
