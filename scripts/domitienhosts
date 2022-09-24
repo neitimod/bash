@@ -132,6 +132,7 @@ ff02::2 ip6-allrouters" > hosts
 titleOP()
 {
 clear
+sitesblocked=$(wc -l < /etc/hosts)
 username=$(awk -F ':' '{ print $1}' /etc/passwd | tail -n 1)
 echo -e "#############################################
 #                                           #
@@ -145,6 +146,7 @@ echo -e "#############################################
 #############################################
 
 Hello ${username^} !
+Your hosts file is currently blocking ${sitesblocked-20}
 What would you like to do today ?
 [choose a number]
 
@@ -186,7 +188,7 @@ echo "Successfully removed from list."
 sleep 3
 clear
 exit ;;
-5) "See you soon."
+5) echo "See you soon."
 sleep 3
 clear
 exit ;;
