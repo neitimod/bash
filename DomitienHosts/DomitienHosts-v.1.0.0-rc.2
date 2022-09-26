@@ -1,0 +1,285 @@
+#!/bin/bash
+
+#############################################
+#                 READ ME                   #
+# DomitienHosts is a /etc/hosts file editor #
+# very aggressive to block malicious and    #
+# p0rnographic websites.                    #
+#                                           #
+# For other scripts (if available) check    #
+# the github page of the author : neitimod  #
+# Report bugs. Thanks.                      #
+#                                           #
+# Licence : GPL v3.O                        #
+#############################################
+
+#############################################
+#ALL THE FUNCTIONS ARE DISPLAYED DOWN BELLOW#
+#############################################
+
+#displays the main title
+openingTitle()
+{
+waitnumber=1
+clear
+sitesblocked=$(grep -c "0.0.0.0" /etc/hosts)
+if [ sitesblocked == 0 ];then
+web="website"
+else
+web="websites"
+fi
+username=$(grep 'home' /etc/passwd | tail -n 1 | awk -F ':' '{print $1}')
+echo -e "#############################################
+#                                           #
+#  =====                    =   =           #
+#  =    =                   =   =           #
+#  =    =                   =====           #
+#  =====  O M I T I E N     =   = O S T S   #
+#                                           #
+#  No Porn. No Bullshit. Extreme !          #
+#                                           #
+#############################################
+
+Hello ${username^} !
+Your hosts file is currently blocking $sitesblocked $web.
+What would you like to do today ?
+
+[choose a number]
+
+1) Set the Domitien Hosts file
+2) Backup the hosts file to previous state
+3) Add a website
+4) Remove a website
+5) Reset hosts
+6) Exit
+
+"
+read choice
+case $choice in
+1)
+caseOne
+clear
+sleep 1
+sitesblockedupdated=$(grep -c "0.0.0.0" /etc/hosts)
+clear
+echo "You are ALMOST safe now...with $sitesblockedupdated websites blocked !"
+sleep 3
+endMusic &> /dev/null
+rm $(pwd)/trigger
+clear
+exit ;;
+2)
+cp /etc/.hosts_backup /etc/hosts
+echo "Backup complete."
+sleep 3
+endMusic &> /dev/null
+clear
+exit ;;
+3)
+echo -e "Please enter the website you wish to add \n (example : example.com / no www, no https, so spaces) \n "
+read website
+echo "0.0.0.0       www.$website" >> /etc/hosts
+echo "0.0.0.0       $website" >> /etc/hosts
+sort /etc/hosts | uniq -u > /etc/hoststemp
+cp /etc/hoststemp /etc/hosts
+shred -f -n0 -z -u /etc/hoststemp
+echo "Successfully added to list."
+sleep 3
+endMusic &> /dev/null
+clear
+exit ;;
+4)
+echo -e "Please enter the website you wish to remove from list \n (example : duckduckgo.com) \n"
+read website
+sed -i "/$website/d" /etc/hosts
+echo "Successfully removed from list."
+sleep 3
+endMusic &> /dev/null
+clear
+exit ;;
+5)
+resetHosts
+echo "Your hosts file has been reset to default."
+sleep 3
+endMusic &> /dev/null
+;;
+6) echo "See you soon."
+sleep 3
+endMusic &> /dev/null
+clear
+exit ;;
+*) echo "Wrong option, please start the script again."
+sleep 3
+endMusic &> /dev/null
+clear
+exit ;;
+esac
+}
+
+#plays chiptune music (copyright free)
+playMusic()
+{
+wget musicjapan.free.fr/music.mp3 -O $(pwd)/music.mp3
+apt -y install mpg123
+mpg123 --loop -1 $(pwd)/music.mp3
+}
+
+endMusic()
+{
+  pidmpg=$(pgrep -o -x mpg123)
+  kill $pidmpg
+  apt -y autoremove mpg123
+  shred -f -n0 -z -u $(pwd)/music.mp3
+}
+
+#spinner to indicate waiting
+waitingLoop()
+{
+waitingid=1
+spin[0]="W"
+spin[1]="A"
+spin[2]="I"
+spin[3]="T"
+spin[4]=" "
+echo -ne "Please wait...This may take some time ! ${spin[4]}"
+
+while [ $waitingid == 1 ];
+do
+FILE=$(pwd)/trigger
+if [ ! -f "$FILE" ]; then
+  for i in "${spin[@]}"
+  do
+  echo -ne "\b$i"
+  sleep 0.2
+  done
+else
+  waitingid=0
+fi
+done
+}
+
+#main function driving the /etc/hosts file's installation
+caseOne()
+{
+waitingLoop &
+dossier=$(pwd)
+rewriteHost &> /dev/null
+dlHosts &> /dev/null
+makeitBeautiful
+cat $(pwd)/unique >> $(pwd)/hosts
+cp /etc/hosts /etc/.hosts_backup
+cp $(pwd)/hosts /etc/hosts
+shreditBeautiful
+unset dossier
+unset hostname
+unset username
+shred -f -n0 -z -u $(pwd)/hosts
+touch $(pwd)/trigger
+clear
+}
+
+#downloads all hosts lists
+dlHosts()
+{
+wget https://block.energized.pro/unified/formats/domains.txt -O $(pwd)/energized
+wget https://mkb2091.github.io/blockconvert/output/domains.txt -O $(pwd)/blockconvert
+wget https://dbl.oisd.nl/ -O $(pwd)/oisd
+wget https://raw.githubusercontent.com/columndeeply/hosts/main/hosts00 -O $(pwd)/pow
+}
+
+#organizes the future /etc/hosts file
+makeitBeautiful()
+{
+sed '/^#/d' $(pwd)/energized > $(pwd)/cleanenergized
+sed '/^#/d' $(pwd)/blockconvert > $(pwd)/cleanblockconvert
+sed '/^#/d' $(pwd)/oisd > $(pwd)/cleanoisd
+sed -i -e 's/127.0.0.1 //g' $(pwd)/pow
+sed -i -e 's/^127.0.0.1       //g' $(pwd)/pow
+cat $(pwd)/cleanenergized >> $(pwd)/cleanblockconvert
+cat $(pwd)/cleanblockconvert >> $(pwd)/cleanoisd
+cat $(pwd)/cleanoisd >> $(pwd)/pow
+echo "hdporn92.com
+www.hdporn92.com
+iceporncasting.com
+iceporncasting.net
+www.iceporncasting.com
+www.iceporncasting.net" >> $(pwd)/pow
+awk '{print "0.0.0.0       "$0}' $(pwd)/pow > $(pwd)/readyoisd
+sed -i '/duckduckgo.com/d' $(pwd)/readyoisd
+sort $(pwd)/readyoisd | uniq -u > $(pwd)/unique
+}
+
+#shreds and deletes all files after installation
+shreditBeautiful()
+{
+shred -f -n0 -z -u $(pwd)/energized
+shred -f -n0 -z -u $(pwd)/cleanenergized
+shred -f -n0 -z -u $(pwd)/blockconvert
+shred -f -n0 -z -u $(pwd)/cleanblockconvert
+shred -f -n0 -z -u $(pwd)/oisd
+shred -f -n0 -z -u $(pwd)/cleanoisd
+shred -f -n0 -z -u $(pwd)/pow
+shred -f -n0 -z -u $(pwd)/readyoisd
+shred -f -n0 -z -u $(pwd)/unique
+}
+
+#sets the hosts file for future additions
+rewriteHost()
+{
+hostname=$(cat /etc/hostname)
+
+echo "#############################################
+#                                           #
+#  =====                    =   =           #
+#  =    =                   =   =           #
+#  =    =                   =====           #
+#  =====  O M I T I E N     =   = O S T S   #
+#                                           #
+#  No Porn. No Bullshit. Extreme !          #
+#                                           #
+#############################################
+
+127.0.0.1	localhost
+127.0.1.1	$hostname
+
+# The following lines are desirable for IPv6 capable hosts
+::1     ip6-localhost ip6-loopback
+fe00::0 ip6-localnet
+ff00::0 ip6-mcastprefix
+ff02::1 ip6-allnodes
+ff02::2 ip6-allrouters" > $(pwd)/hosts
+}
+
+#resets to default hosts file
+resetHosts()
+{
+  hostname=$(cat /etc/hostname)
+
+  echo "127.0.0.1	localhost
+  127.0.1.1	$hostname
+
+  # The following lines are desirable for IPv6 capable hosts
+  ::1     ip6-localhost ip6-loopback
+  fe00::0 ip6-localnet
+  ff00::0 ip6-mcastprefix
+  ff02::1 ip6-allnodes
+  ff02::2 ip6-allrouters" > /etc/hosts
+}
+
+################
+#SCRIPT ACTIONS#
+################
+
+clear
+echo "=====      
+=    =               
+=    =                 
+=====  O M I T I E N >>> bash at your service
+_____________________________________________
+
+
+
+"
+read -p "         [Press -ENTER- to start].."
+playMusic &> /dev/null &
+openingTitle
