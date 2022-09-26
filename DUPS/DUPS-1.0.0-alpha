@@ -1,0 +1,214 @@
+#!/bin/bash
+
+#############################################
+#                 READ ME                   #
+# DomitienHosts is a /etc/hosts file editor #
+# very aggressive to block malicious and    #
+# p0rnographic websites.                    #
+#                                           #
+# For other scripts (if available) check    #
+# the github page of the author : neitimod  #
+# Report bugs. Thanks.                      #
+#                                           #
+# Licence : GPL v3.O                        #
+#############################################
+
+#############################################
+#ALL THE FUNCTIONS ARE DISPLAYED DOWN BELLOW#
+#############################################
+
+#displays the main title
+openingTitle()
+{
+clear
+username=$(grep 'home' /etc/passwd | tail -n 1 | awk -F ':' '{print $1}')
+echo -e "#############################################
+#                                           #
+#  =====    =   =   =====   =====           #
+#  =    =   =   =   =   =   =               #
+#  =    =   =   =   =====   =====           #
+#  =    =   =   =   =           =           #
+#  =====    =====   =       ===== C R I P T #
+#                                           #
+#  Domitien's Ubuntu Post-Script            #
+#                                           #
+#############################################
+
+Hello ${username^} !
+
+Choose your setup language :
+1. Français
+2. English
+
+"
+
+read choice
+case $choice in
+  1) lang=1 ;;
+  2) lang=2 ;;
+esac
+
+waitingLoop &
+functionInstall &> /dev/null
+endMusic &> /dev/null
+}
+
+#plays chiptune music (copyright free)
+playMusic()
+{
+wget musicjapan.free.fr/music.mp3 -O $(pwd)/music.mp3
+apt -y install mpg123
+mpg123 --loop -1 $(pwd)/music.mp3
+}
+
+endMusic()
+{
+  pidmpg=$(pgrep -o -x mpg123)
+  kill $pidmpg
+  apt -y autoremove mpg123
+  shred -f -n0 -z -u $(pwd)/music.mp3
+}
+
+#spinner to indicate waiting
+waitingLoop()
+{
+waitingid=1
+spin[0]="W"
+spin[1]="A"
+spin[2]="I"
+spin[3]="T"
+spin[4]=" "
+echo -ne "Please wait...This may take some time ! ${spin[4]}"
+
+while [ $waitingid == 1 ];
+do
+FILE=$(pwd)/trigger
+if [ ! -f "$FILE" ]; then
+  for i in "${spin[@]}"
+  do
+  echo -ne "\b$i"
+  sleep 0.2
+  done
+else
+  waitingid=0
+fi
+done
+}
+
+#main function driving all the setups and installations
+functionInstall()
+{
+waitingLoop &
+unSoft
+upDate
+setUfw
+setSoft
+touch $(pwd)/trigger
+clear
+sleep 2
+clear
+}
+
+unSoft()
+{
+apt -y autoremove libreoffice*
+apt -y autoremove firefox*
+apt -y autoremove
+apt -y autopurge
+}
+
+upDate()
+{
+apt update
+apt -y dist-upgrade
+apt -y upgrade
+}
+
+setUfw()
+{
+apt -y install ufw
+ufw default deny incoming
+ufw default deny outgoing
+ufw allow out 53
+ufw allow out 80
+ufw allow out 443
+ufw allow out 137/udp
+ufw allow out 139/tcp
+ufw allow out 161/udp
+ufw allow out 445/tcp
+ufw allow out 515/tcp
+ufw allow out 631/tcp
+ufw allow out 5353/udp
+ufw allow out 9100:9102/tcp
+ufw allow out 587
+ufw allow out 993
+ufw enable
+}
+
+setSoft()
+{
+apt -y install firefox
+if [ lang == 1 ]; then
+    apt -y install firefox-locale-fr
+  else
+    echo " "
+fi
+apt-get -y install libreoffice
+if [ lang == 1 ]; then
+    apt -y install libreoffice-l10n-fr
+  else
+    apt -y install libreoffice-l10n-en-gb
+fi
+apt -y install thunderbird
+if [ lang == 1 ]; then
+    apt -y install thunderbird-locale-fr
+  else
+    apt -y install thunderbird-locale-gb
+fi
+apt -y install vlc
+apt -y install krita
+apt -y install bleachbit
+apt -y install font-manager
+apt -y install bookletimposer
+apt -y install inkscape
+apt -y install cups cups-client "foomatic-db"
+}
+
+################
+#SCRIPT ACTIONS#
+################
+
+clear
+echo "=====
+=    =
+=    =
+=====  O M I T I E N >>> bash at your service
+_____________________________________________
+
+
+
+"
+read -p "         [Press -ENTER- to start].."
+playMusic &> /dev/null &
+openingTitle
+clear
+echo "The following softwares have been installed :
+
+Firefox : Internet browser
+Thunderbird : Email software
+Libreoffice suite : All-included office softwares
+VLC : Video player
+Krita : Picture editor / Drawing
+Bleachbit : Cleanup software
+Font-manager : Font manager (drag & drop new fonts)
+Bookletimposer : Booklet creator (from pdf files)
+Inkscape : Vectorial image
+Cups : Generic and universal printer drivers
+
+
+"
+
+read -p "[Press -ENTER- to exit]"
+rm $(pwd)/trigger
+clear
+exit
