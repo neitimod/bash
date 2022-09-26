@@ -30,7 +30,7 @@ What does it do ?
     
 - DUPS (Domitien Ubuntu Post-Script)
 
-Upcoming.
-Bash script for newbies willing to get everything they need installed, firewall rules included.
+RELEASED !
+Bash script for newbies willing to get everything they need installed for an office use, firewall rules included.
 
 Note that **this repository does not accept pull requests!** The code here is provided in hopes that others may find it useful, not to allow community contribution. Issue reports of all kinds (bug reports, feature requests, etc.) are VERY welcome.
