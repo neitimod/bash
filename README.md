@@ -4,14 +4,16 @@
 
 My scripts are not perfect, feel free to show me a better way to write them, make them lighter, faster... Everyone will benefit.
 
-**You need to be superuser to run the scripts bellow and make them executable. Follow the procedure :**
+**You need to be superuser to run some of the scripts bellow and make them executable. Follow the procedure :**
 
     sudo -s
     [enter password]
     chmod +x SCRIPTNAME
-    ./SCRIPTNAME
+    ./SCRIPTNAME    
 
-- Domitien Hosts (tested with Ubuntu)
+**- Domitien Hosts (tested with Ubuntu)**
+
+(15/10/2022) .deb installer released !
 
 Worried about privacy and consequences of p0rn spreading over the Internet, my first script uses various hosts files sources from [filterlists](https://filterlists.com/lists/pl-host-file) as well as from git.
 **Quite and aggressive list with 4062100 entries (as of 24 sept. 22)**
@@ -28,7 +30,7 @@ What does it do ?
     7) Allows to remove a website from the list
     8) Allow to restore the VERY PREVIOUS back-up state
     
-- DUPS (Domitien Ubuntu Post-Script)
+**- DUPS (Domitien Ubuntu Post-Script)**
 
 RELEASED !
 Bash script for newbies willing to get everything they need installed for an office use, firewall rules included.
