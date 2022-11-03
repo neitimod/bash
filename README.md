@@ -14,6 +14,7 @@ My scripts are not perfect, feel free to show me a better way to write them, mak
 **- Domitien Hosts (tested with Ubuntu)**
 
 (15/10/2022) .deb installer released !
+(03/11/2022) v1.0.1 released !
 
 Worried about privacy and consequences of p0rn spreading over the Internet, my first script uses various hosts files sources from [filterlists](https://filterlists.com/lists/pl-host-file) as well as from git.
 **Quite and aggressive list with 4062100 entries (as of 24 sept. 22)**
